@@ -38,3 +38,14 @@ do
     break
   fi
 done
+USER_ID=$($PSQL "SELECT user_id FROM users WHERE username='$USERNAME'")
+
+# Update games played
+UPDATE_GAMES_PLAYED=$($PSQL "UPDATE users SET games_played = games_played + 1 WHERE user_id=$USER_ID")
+
+# Update best game
+BEST_GAME=$($PSQL "SELECT best_game FROM users WHERE user_id=$USER_ID")
+if [[ -z $BEST_GAME || $GUESSES -lt $BEST_GAME ]]
+then
+  UPDATE_BEST_GAME=$($PSQL "UPDATE users SET best_game = $GUESSES WHERE user_id=$USER_ID")
+fi
